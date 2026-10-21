@@ -2,12 +2,21 @@ import streamlit as st
 import pandas as pd
 import sqlite3
 import plotly.express as px
+from summerize import make_summary
+import os
 
 from build_db import build
 build()
 
 st.set_page_config(page_title="Weather Dashboard", layout="wide")
 
+if "GROQ_API_KEY" not in os.environ and "GROQ_API_KEY" not in st.secrets:
+    os.environ
+@st.cache_data(ttl=12*60*60, show_spinner="Writing today's summary")  
+def get_summary():
+    return make_summary()
+               
+st.markdown(get_summary())
 @st.cache_data #prevents data reload
 def load_data():
     conn = sqlite3.connect("project.db")
